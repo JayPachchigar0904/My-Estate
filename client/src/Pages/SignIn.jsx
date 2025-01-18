@@ -58,7 +58,7 @@ const dispatch = useDispatch();
       </form>
        <div className='flex gap-2 my-5'>
        <p>Don't Have an account?</p>
-       <Link to = {"/sign-up"}>
+       <Link to = "/sign-up">
         <span className='text-blue-600'>Sign Up</span>
        </Link>
        </div>
