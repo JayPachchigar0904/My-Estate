@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { updateUserFailure,updateUserSuccess,updateUserStart } from '../Redux/users/userSlice'
+import { updateUserFailure,updateUserSuccess,updateUserStart, deleteUserFailure, deleteUserStart, deleteUserSuccess } from '../Redux/users/userSlice'
+import { Navigate } from 'react-router-dom'
 
 function Profile() {
   const fileRef = useRef(null)
@@ -28,6 +29,26 @@ function Profile() {
     const uploaded_image = await res.json()
     //console.log(uploaded_image)
     setFormData({...formData,avatar : uploaded_image.url});
+  }
+
+  const handleDelete = async () => {
+    try{
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`,{
+        method : 'DELETE',
+      });
+      const data = await res.json();
+      if(data.success === false){
+        dispatch(deleteUserFailure(data.message));
+        return;
+      }
+      dispatch(deleteUserSuccess(data));
+     // <Navigate to = "/sign-up" />
+    }
+    catch(error){
+      //redux-toolkit for front end part
+      dispatch(deleteUserFailure(error.message))
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -67,13 +88,13 @@ function Profile() {
       </form>
 
       <div className='flex justify-between mt-5'>
-        <span className='text-red-700 cursor-pointer'>Delete Account</span>
+        <span className='text-red-700 cursor-pointer' onClick = {handleDelete} >Delete Account</span>
         <span className='text-red-700 cursor-pointer'>Sign Out</span>
       </div>
       <p className='text-red-700 mt-5'>{error ? error : ''}</p>
       <p className='text-green-700 mt-5'>{updateSuccess ? 'User is updated successfully!' : ''}</p>
     </div>
-  )
+  ) 
 }
 
 export default Profile
