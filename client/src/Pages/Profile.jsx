@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { updateUserFailure,updateUserSuccess,updateUserStart, deleteUserFailure, deleteUserStart, deleteUserSuccess,signOutUserFailure,signOutUserSuccess,signOutUserStart } from '../Redux/users/userSlice'
-import { Navigate } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 
 function Profile() {
   const fileRef = useRef(null)
@@ -101,6 +101,7 @@ function Profile() {
         <input type = 'email' placeholder='email' defaultValue={currentUser.email} className='border p-3 rounded-lg gap-4' id = 'email' onChange = {handleChange}/>
         <input type = 'password' placeholder='password'  className='border p-3 rounded-lg gap-4' id = 'password' onChange = {handleChange}/>
         <button disabled = {loading} className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>{loading ? 'Loading...':'Update'}</button>
+        <Link to = "/create-listing" className = "bg-green-700 text-white p-3 rounded-lg uppercase hover:opacity-95 text-center">Create Listing</Link>
       </form>
 
       <div className='flex justify-between mt-5'>
