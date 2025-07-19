@@ -33,6 +33,23 @@ function Profile() {
     setFormData({ ...formData, avatar: uploaded_image.url });
   }
 
+  const handleListingDelete = async (listingId) => {
+    try{
+      const res = await fetch(`/api/listing/delete/${listingId}`,{
+        method: 'DELETE',
+      });
+      const data = await res.json()
+      if(data.success === false){
+        console.log(data.message);
+        return;
+      }
+      setUserListings((prev) => prev.filter((listing) => listing._id !== listingId) )
+    }
+    catch(error){
+      console.log(error.message)
+    }
+  }
+
   const handleShowListings = async () => {
     try {
       setShowListingsError(false);
@@ -151,7 +168,7 @@ function Profile() {
           <p>{listing.name}</p>
         </Link>
         <div className="flex flex-col">
-          <button className="uppercase text-red-700">Delete</button>
+          <button onClick = {() => handleListingDelete(listing._id)} className="uppercase text-red-700">Delete</button>
           <button className="uppercase text-green-700">Edit</button>
         </div>
       </div>
