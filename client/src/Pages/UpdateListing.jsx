@@ -1,9 +1,10 @@
-import { set } from 'mongoose';
-import React, { useState } from 'react'
-import {useSelector} from 'react-redux'
-import {useNavigate} from 'react-router-dom'
 
-export default function Listing() {
+
+import React, { useState,useEffect } from 'react'
+import {useSelector} from 'react-redux'
+import {useNavigate, useParams} from 'react-router-dom'
+
+export default function UpdateListing() {
   const {currentUser} = useSelector(state => state.user)
   const [files,setFiles] = useState([]);
   const [error, setError] = useState(false);
@@ -23,9 +24,22 @@ export default function Listing() {
     parking: false,
     furnished: false,
   })
-  console.log(formData)
+  const params = useParams();
   const [ImageUploadError,setImageUploadError] = useState(false);
   const [uploading, setUploading] = useState(false)
+  useEffect(() => {
+    const fetchListing = async () => {
+      const listingId = params.listingId;
+      const res = await fetch(`/api/listing/get/${listingId}`);
+      const data = await res.json();
+      if(data.success === false){
+        console.log(data.message);
+        return;
+      }
+      setFormData(data);
+    };  
+    fetchListing();
+  },[]);
   const handleRemoveImage = (index) => {
     setFormData({
       ...formData,
@@ -97,7 +111,7 @@ export default function Listing() {
         if(formData.regularPrice < formData.discountPrice ) return setError('Discount price cannot be greater than regular price')
       setLoading(true)
       setError(false)
-      const res = await fetch('/api/listing/create', {
+      const res = await fetch(`/api/listing/update/${params.listingId}`, {
         method : 'POST',
         headers: {
           'Content-Type' : 'application/json',
@@ -120,7 +134,7 @@ export default function Listing() {
   }
   return (
     <main className='p-3 max-w-4xl mx-auto'>
-        <h1 className='text-center font-semibold text-3xl my-7'>Create a Listing</h1>
+        <h1 className='text-center font-semibold text-3xl my-7'>Update Listing</h1>
         <form onSubmit={handleSubmit} className='flex flex-col sm:flex-row gap-4'>
             <div className='flex flex-col gap-4 flex-1'>
             <input type="text" onChange = {handleChange} value={formData.name} placeholder="Name" className='border p-3 rounded-lg' id = 'name' maxLength='62' minLength='10' required/>
@@ -200,7 +214,7 @@ export default function Listing() {
                 <button type = 'button' onClick = {() => handleRemoveImage(index)} className='p-3 text-red-700 rounded-lg uppercase hover:opacity-75'>Delete</button>
                 </div>
               ))}
-              <button disabled = {loading || uploading} className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:shadow-lg disabled:opacity-80'>{loading ? 'Creating...' : 'Create Listing'}</button>
+              <button disabled = {loading || uploading} className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:shadow-lg disabled:opacity-80'>{loading ? 'Updating...' : 'Update Listing'}</button>
               {error && <p className='text-red-700 text-sm'>{error}</p>}
             </div>
             </form>
