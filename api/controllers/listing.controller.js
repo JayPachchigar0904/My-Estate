@@ -1,6 +1,6 @@
 import Listing from "../model/listing.model.js";
 import { errorHandler } from "../utils/error.js";
-import { errorHandler } from "../utils/error.js";
+
 
 export const createListing = async (req,res,next) => {
   try{
@@ -51,6 +51,6 @@ export const updateListing = async (req, res, next) => {
     return res.status(200).json(updatedListing);
   } catch (error) { 
     return next(errorHandler(400, 'Invalid Listing ID'));
-  }
+  }  
 };
    
