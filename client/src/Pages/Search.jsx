@@ -1,10 +1,11 @@
-import React from 'react'
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ListingItem from '../Components/ListingItem';
 
+
 export default function Search() {
     const navigate = useNavigate();
+    const [showmore, setShowmore] = useState(false);
     const [sideBarData,setSideBarData] = useState({
         searchTerm:'',
         type:'all',
@@ -15,7 +16,21 @@ export default function Search() {
         order:'desc',
     })
     const [loading, setLoading] = useState(false);
-    const [listings, setListings] = useState([])
+    const [listings, setListings] = useState([]);
+    const onShowmoreClick = async () => {
+        const numberOfListings = listings.length;
+        const startIndex = numberOfListings;
+        const urlParams = new URLSearchParams(location.search);
+        urlParams.set('startIndex',startIndex);
+        const searchQuery = urlParams.toString();
+        const res = await fetch(`/api/listing/get?${searchQuery}`);
+        const data = await res.json();
+        if(data.length < 9){
+            setShowmore(false);
+        }
+        setListings([...listings,...data]);
+
+    }
         const handleChange = (e) => {
         if(e.target.id === "all" || e.target.id === "sale" || e.target.id === "rent"){
             setSideBarData({...sideBarData, type:e.target.id})
@@ -65,10 +80,17 @@ export default function Search() {
       });
     }
     const fetchListings = async () => {
+      setShowmore(false);
       setLoading(true);
       const searchQuery = urlParams.toString();
       const res = await fetch(`/api/listing/get?${searchQuery}`);
       const data = await res.json();
+      if(data.length > 8){
+        setShowmore(true);
+      }
+      else{
+        setShowmore(false);
+      }
       setListings(data);
       setLoading(false);
     }
@@ -119,7 +141,7 @@ export default function Search() {
             </div>
         </div>
         <div className='flex gap-2 flex-wrap items-center'>
-            <label className='font-semibold'>Amenx  ities:</label>
+            <label className='font-semibold'>Amenities:</label>
             <div className='flex gap-2'>
                 <input type="checkbox" id = "parking" className='w-5'checked={sideBarData.parking} onChange={handleChange}/>
                 <span>Parking</span>
@@ -154,6 +176,11 @@ export default function Search() {
         }
         {
             !loading && listings && listings.map((listing) => <ListingItem key = {listing._id} listing={listing}/>)
+        }
+        {
+            showmore && (
+                <button className = 'text-green-700 hover:underline p-7 text-center w-full' onClick = {onShowmoreClick}>Show more...</button>
+            ) 
         }
       </div>
       </div>

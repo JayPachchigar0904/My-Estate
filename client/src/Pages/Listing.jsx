@@ -97,7 +97,7 @@ export default function Listing() {
         if(formData.regularPrice < formData.discountPrice ) return setError('Discount price cannot be greater than regular price')
       setLoading(true)
       setError(false)
-      const res = await fetch('/api/listing/create', {
+      const res = await fetch('/api/listing/create', {  
         method : 'POST',
         headers: {
           'Content-Type' : 'application/json',
@@ -124,7 +124,7 @@ export default function Listing() {
         <form onSubmit={handleSubmit} className='flex flex-col sm:flex-row gap-4'>
             <div className='flex flex-col gap-4 flex-1'>
             <input type="text" onChange = {handleChange} value={formData.name} placeholder="Name" className='border p-3 rounded-lg' id = 'name' maxLength='62' minLength='10' required/>
-            <textarea type="text"  onChange = {handleChange} value={formData.description} placeholder="Description" className='border p-3 rounded-lg' id = 'description' maxLength='62' minLength='10' required/>
+            <textarea type="text"  onChange = {handleChange} value={formData.description} placeholder="Description" className='border p-3 rounded-lg' id = 'description' maxLength='1000' minLength='10' required/>
             <input type="text"  onChange = {handleChange} value={formData.address} placeholder="Address" className='border p-3 rounded-lg' id = 'address'  required/>
         
             <div className='flex gap-6 flex-wrap'>
