@@ -16,13 +16,6 @@ mongoose.connect(process.env.MONGO).then(() => {
 console.log(err)
 });  
 
-const __dirname = path.resolve();
-app.use(express.static(path,join(__dirname,'/client/dist')))  
-
-app.get('*', (req,res) => {
-  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'))
-})
-
  
 const app = express();  
 
@@ -37,6 +30,14 @@ app.listen(3000,() => {
 app.use('/api/user', userRouter) // run by using api/user/test
 app.use('/api/auth', authRouter)
 app.use('/api/listing',listingRouter)
+
+const __dirname = path.resolve();
+app.use(express.static(path,join(__dirname,'/client/dist')))  
+
+app.get('*', (req,res) => {
+  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'))
+})
+
 
 app.use((err,req,res,next) => {  //middleware
   const statusCode = err.statusCode || 500;
